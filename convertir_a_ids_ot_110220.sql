@@ -928,22 +928,33 @@ update ots set montoRechazo = 0 where montoRechazo is null
 --drop view v_ots
 --create view v_OTs as
 select --top 200 
-	   [idOT]						OT
-      ,convert(varchar,[fechaSol],120)  Fecha_Solicitud
+	   idOT						            OT
+      ,SUBSTRING(idot,5,4)                  Cont
+      ,SUBSTRING(idot,10,2)                 Anio
+      ,convert(varchar,[fechaSol],120)      Fecha_Solicitud
       ,[Descrip] 							Descripcion
       ,AS_.nomAS 							Area_Solicitante
-      ,P_.nomPersona + ' ' + P_.apPersona 	Solicitante
+      ,idPersona
+      ,P_.nomPersona + ' ' + P_.apPersona 
+                     + ' ' + P_.amPersona 	Solicitante
+      ,idAA
       ,AA_.nomAA 							Area_Asignacion
+      ,oo.idPrograma
 	  ,CP_.NombrePrograma 					Programa
+      ,oo.idSubPrograma    
       ,CS_.NombreSubPrograma 				SubPrograma
+      ,idTipoServ
       ,TS_.NombreTS 						Tipo_Servicio
       ,[fechaEnvio] 						Fecha_Envio
+      ,oo.idEstatus
       ,SO_.nomStatus 						Estatus
+      ,oo.idUrgencia
       ,U_.nomUrgencia 						Urgencia
+      ,oo.idComplejidad
       ,C_.nomComplejidad 					Complejidad
       ,[tiempoAtn] 							Tiempo_Atencion
-      ,[fechaAtn] 							Fecha_Atencion
-      ,[fechaEntrega] 						Fecha_Entrega
+      ,convert(varchar,fechaAtn,120) 		Fecha_Atencion
+      ,convert(varchar,fechaEntrega,120) 	Fecha_Entrega
       ,[enTiempo]							En_Tiempo
       ,Observaciones
       ,[obserCancel]						Observaciones_Cancelacion
@@ -962,8 +973,13 @@ join   Complejidad	     C_ on  C_.idComplejidad = oo.idComplejidad
 join   cat_Programa	    CP_ on CP_.idPrograma    = oo.idPrograma
 join   cat_SubPrograma  CS_ on CS_.idsubprograma = oo.idSubPrograma
 join   cat_TipoServicio TS_ on TS_.idts   	     = oo.idTipoServ
+order  by cont
+
 */
 
+select  top 100 * from v_ots 
 
-select  top 10 * from v_ots order by ot
+--select  top 100 * from v_ots order by monto desc
+--select  top 100 * from v_ots order by Fecha_Solicitud
 --select  * from v_ots where ot is null order by ot
+--select distinct(Tiempo_Atencion) from v_ots order by Tiempo_Atencion desc

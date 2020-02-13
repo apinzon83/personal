@@ -51,7 +51,7 @@ where  RmopFolio in (
 rollback tran
 
 --paso 10 - consultamos los folios en T
-declare @archid int; set @archid = 59696
+declare @archid int; set @archid = 59717
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImporte, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by rmstid
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImporte, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by rmstid
 select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImporte, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by rmstid
@@ -81,6 +81,7 @@ select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImpor
 59653 - 59672 - DEC_070220_1900 -  66 rem vs  65 dec - 
 59673 - 59695 - DEC_100220_1900 - 218 rem vs 212 dec - 
 59696 - 59716 - DEC_110220_1900 -  66 rem vs 0 dec - 
+59717 - 59737 - DEC_110220_1900 -  66 rem vs 0 dec - 
 */
 
 
@@ -119,7 +120,7 @@ WHILE @aid_inicio <= @aid_fin
 		and    RmInArchID = @aid_inicio
 		and	   RmopCtaAdm not in (
 									select right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10) cta
-									from PrgEspRemesas.dbo.DEC_050220_1930 oo
+									from PrgEspRemesas.dbo.DEC_060220_1930 oo
 									join PrgEspRemesas.dbo.RemOperaciones rr on (right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10)) = oo.f1 and oo.f7	like concat('%',ltrim(rtrim([RmopFolio])),'%')
 									where oo.f6 = 'H' 
 									and oo.f7 like 'REM%'
@@ -139,12 +140,14 @@ WHILE @aid_inicio <= @aid_fin
 	END;
 	select * from PrgEspRemesas.dbo.t_temp_290120 order by RmInArchID;
 --  select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio = @folio
---  select * from PrgEspRemesas.dbo.DEC_060120_1000 where f7	like '%'+@folio+'%'
+--  select * from PrgEspRemesas.dbo.DEC_060120_1000 where f7 like '%'+@folio+'%'
 
 
 /*
-select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio = '23810041225255'
-select top 10 * from PrgEspRemesas.dbo.RemOperaciones  where rmopctaadm  = '0468862073'
+select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio = '018125270334'
+select * from PrgEspRemesas.dbo.DEC_060220_1930 where f7 like    '&018125270334%'
+
+select top 10 * from PrgEspRemesas.dbo.RemOperaciones where rmopctaadm = '0468862073'
 
 select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio in ('018124840892',
 '23810041225255'      ,
