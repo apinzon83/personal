@@ -933,6 +933,7 @@ select --top 200
       ,SUBSTRING(idot,10,2)                 Anio
       ,convert(varchar,[fechaSol],120)      Fecha_Solicitud
       ,[Descrip] 							Descripcion
+      ,oo.idAreaSol 							
       ,AS_.nomAS 							Area_Solicitante
       ,idPersona
       ,P_.nomPersona + ' ' + P_.apPersona 
