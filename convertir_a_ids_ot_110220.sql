@@ -984,3 +984,4 @@ select  top 100 * from v_ots
 --select  top 100 * from v_ots order by Fecha_Solicitud
 --select  * from v_ots where ot is null order by ot
 --select distinct(Tiempo_Atencion) from v_ots order by Tiempo_Atencion desc
+--select distinct(En_Tiempo) from v_ots order by En_Tiempo desc
