@@ -52,8 +52,8 @@ rollback tran
 
 --paso 10 - consultamos los folios en T
 declare @archid int; set @archid = 59738
-select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImporte, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by rmstid
-select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImporte, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by rmstid
+--select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImporte, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by rmstid
+--select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImporte, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by rmstid
 select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImporte, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by rmstid
 
 
@@ -77,20 +77,21 @@ select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImpor
 59528 - 59548 - DEC_300120_1900 -  54 rem vs  61 dec - ok
 59549 - 59611 - DEC_040220_1900 - 338 rem vs 281 dec - ok
 59612 - 59632 - DEC_050220_1930 -  60 rem vs  64 dec - ok
-59633 - 59653 - DEC_060220_1930 -  60 rem vs  64 dec - 
-59653 - 59672 - DEC_070220_1900 -  66 rem vs  65 dec - 
-59673 - 59695 - DEC_100220_1900 - 218 rem vs 212 dec - 
-59696 - 59716 - DEC_110220_1900 -  66 rem vs 0 dec - 
-59717 - 59737 - DEC_110220_1900 -  66 rem vs 0 dec - 
+59633 - 59653 - DEC_060220_1930 -  60 rem vs  64 dec - todo mal
+59653 - 59672 - DEC_070220_1900 -  66 rem vs  65 dec - solo hay 3 pendientes de validación en tcb, ya envié correo a Irais.
+59673 - 59695 - DEC_100220_1900 - 218 rem vs 212 dec - solo hay 8 folios que no aparecen en la consulta de Omar, ya le pedí ayuda a Ira para validar.
+59696 - 59716 - DEC_110220_1930 -  66 rem vs  70 dec - solo hay un registro que no aparece en DEC_110220
+59717 - 59737 - DEC_120220_1930 -  66 rem vs  69 dec - solo hay un registro que no aparece en DEC_120220
+59738 - 59788 - DEC_170220_1000 - 284 rem vs 286 dec - solo hay dos registros que no aparecen en DEC_170220
 */
 
 
 --paso 11 - validar los rminarcid
 /* 
 select distinct( right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10)) cta, rmopfolio, RmInArchID, rmopfecmov
-from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID between 59673 and 59695 order by RmInArchID
+from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID between 59696 and 59716  order by RmInArchID
 
-select * from PrgEspRemesas.dbo.DEC_100220_1900 where f6 = 'H' and f7 like '%REM%'
+select * from PrgEspRemesas.dbo.DEC_170220_1000 where f6 = 'H' and f7 like '%REM%'
 
 select right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10) cta ,rr.RmInArchID 
 from PrgEspRemesas.dbo.DEC_270120_1930 oo 
@@ -107,8 +108,8 @@ declare @aid_inicio  int;
 declare @aid_fin     int;
 declare @c_folios	 int;
 declare @folio varchar(50);
-set @aid_inicio = 59633;
-set @aid_fin    = 59653; 
+set @aid_inicio = 59738;
+set @aid_fin    = 59788; 
 
 WHILE @aid_inicio <= @aid_fin
     BEGIN
@@ -120,7 +121,7 @@ WHILE @aid_inicio <= @aid_fin
 		and    RmInArchID = @aid_inicio
 		and	   RmopCtaAdm not in (
 									select right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10) cta
-									from PrgEspRemesas.dbo.DEC_060220_1930 oo
+									from PrgEspRemesas.dbo.DEC_170220_1000 oo
 									join PrgEspRemesas.dbo.RemOperaciones rr on (right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10)) = oo.f1 and oo.f7	like concat('%',ltrim(rtrim([RmopFolio])),'%')
 									where oo.f6 = 'H' 
 									and oo.f7 like 'REM%'
@@ -138,135 +139,43 @@ WHILE @aid_inicio <= @aid_fin
 		end;
 		set @aid_inicio = @aid_inicio + 1;
 	END;
-	select * from PrgEspRemesas.dbo.t_temp_290120 order by RmInArchID;
+	
+	select * from PrgEspRemesas.dbo.t_temp_290120
 --  select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio = @folio
 --  select * from PrgEspRemesas.dbo.DEC_060120_1000 where f7 like '%'+@folio+'%'
 
 
 /*
-select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio = '018125270334'
-select * from PrgEspRemesas.dbo.DEC_060220_1930 where f7 like    '&018125270334%'
+select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio = '00591040348517'
+select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like '%00591040348517%'
+
+select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio = '03532000543166'
+select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like '%03532000543166%'
+
+
+select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio in ('018125375189','018125383144','20310124160395','19101115039','018125392043','19071884076','19101122225','03532000542990')
+
+select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like '%018125375189%'
+select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like '%018125383144%'
+select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like '%20310124160395%'
+select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like '%19101115039%'
+select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like '%018125392043%'
+select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like '%19071884076%'
+select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like '%19101122225%'
+select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like '%03532000542990%'
+
+
+
+select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio in ('018125330389','018125348662','018125351337','18856357411','018125367473')
+
+select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like '%018125330389%'
+select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like '%018125348662%'
+select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like '%018125351337%'
+select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like '%18856357411%'
+select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like '%018125367473%'
+
 
 select top 10 * from PrgEspRemesas.dbo.RemOperaciones where rmopctaadm = '0468862073'
-
-select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio in ('018124840892',
-'23810041225255'      ,
-'18855878474'         ,
-'37539284432'         ,
-'88000326427'         ,
-'19100729434'         ,
-'18359972208'         ,
-'88000326508'         ,
-'G0239296839'         ,
-'284000000415250'     ,
-'284000000712405'     ,
-'19100722280'         ,
-'284000000242663'     ,
-'284000000763216'     ,
-'19100732875'         ,
-'284000000610795'     ,
-'018124848303'        ,
-'018124849027'        ,
-'18528671378'         ,
-'00591038983427'      ,
-'03531012000012'      ,
-'018124855086'        ,
-'203511053304470'     ,
-'18855893390'         ,
-'18295606646'         ,
-'19100740423'         ,
-'18855899827'         ,
-'18855901565'         ,
-'284000000744108'     ,
-'19073786121'         ,
-'19100747428'         ,
-'19100747576'         ,
-'00591040636911'      ,
-'018124870356'        ,
-'018124872486'        ,
-'018124872983'        ,
-'1609110681'          ,
-'18455952337'         ,
-'018124876308'        ,
-'6134138571'          ,
-'13187775904'         ,
-'18528673176'         ,
-'018124888956'        ,
-'1024312486'          ,
-'175319370'           ,
-'69283178566'         ,
-'69283178568'         ,
-'8743057017'          ,
-'03532000540614'      ,
-'00591040336224'      ,
-'018124898662'        ,
-'018124900174'        ,
-'19071296586'         ,
-'19100770065'         ,
-'018124907991'        ,
-'03532000535529'      ,
-'18528678027'         ,
-'03532000527130')
-
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%018124836026%'
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%018124840892%'        
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%23810041225255%'      
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%18855878474%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%37539284432%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%88000326427%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%19100729434%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%18359972208%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%88000326508%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%G0239296839%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%284000000415250%'     
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%284000000712405%'     
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%19100722280%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%284000000242663%'     
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%284000000763216%'     
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%19100732875%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%284000000610795%'     
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%018124848303%'        
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%018124849027%'        
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%18528671378%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%00591038983427%'      
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%03531012000012%'      
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%018124855086%'        
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%203511053304470%'     
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%18855893390%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%18295606646%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%19100740423%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%18855899827%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%18855901565%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%284000000744108%'     
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%19073786121%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%19100747428%'        
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%19100747576%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%00591040636911%'      
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%018124870356%'        
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%018124872486%'       
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%018124872983%'        
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%1609110681%'          
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%18455952337%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%018124876308%'        
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%6134138571%'          
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%13187775904%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%18528673176%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%018124888956%'        
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%1024312486%'          
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%175319370%'           
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%69283178566%'        
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%69283178568%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%8743057017%'          
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%03532000540614%'      
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%00591040336224%'      
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%018124898662%'       
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%018124900174%'        
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%19071296586%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%19100770065%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%018124907991%'        
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%03532000535529%'      
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%18528678027%'         
-select * from PrgEspRemesas.dbo.DEC_280120_1900 where f7 like '%03532000527130%'
 
 declare @aid_inicio2 int; 
 --declare @folio varchar(50); 
