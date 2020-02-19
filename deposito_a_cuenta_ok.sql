@@ -51,7 +51,7 @@ where  RmopFolio in (
 rollback tran
 
 --paso 10 - consultamos los folios en T
-declare @archid int; set @archid = 59738
+declare @archid int; set @archid = 59789
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImporte, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by rmstid
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImporte, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by rmstid
 select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImporte, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by rmstid
@@ -83,6 +83,7 @@ select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImpor
 59696 - 59716 - DEC_110220_1930 -  66 rem vs  70 dec - solo hay un registro que no aparece en DEC_110220
 59717 - 59737 - DEC_120220_1930 -  66 rem vs  69 dec - solo hay un registro que no aparece en DEC_120220
 59738 - 59788 - DEC_170220_1000 - 284 rem vs 286 dec - solo hay dos registros que no aparecen en DEC_170220
+59789 - 59788 - DEC_180220_1830 - 106 rem vs   0 dec - 
 */
 
 
@@ -108,8 +109,8 @@ declare @aid_inicio  int;
 declare @aid_fin     int;
 declare @c_folios	 int;
 declare @folio varchar(50);
-set @aid_inicio = 59738;
-set @aid_fin    = 59788; 
+set 	@aid_inicio = 59738;
+set 	@aid_fin    = 59788; 
 
 WHILE @aid_inicio <= @aid_fin
     BEGIN
