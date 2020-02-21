@@ -51,7 +51,7 @@ where  RmopFolio in (
 rollback tran
 
 --paso 10 - consultamos los folios en T
-declare @archid int; set @archid = 59789
+declare @archid int; set @archid = 59850
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImporte, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by rmstid
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImporte, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by rmstid
 select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImporte, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by rmstid
@@ -72,18 +72,21 @@ select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImpor
 59423 - 59464 - DEC_240120_1900 - ok
 59465 - 59485 - DEC_270120_1930 - 205 REM vs 209 DEC - ok
 59486 - 59494 - DEC_280120_1000 - ok
-59495 - 59506 - DEC_280120_1900 -  44 rem vs  45 dec - ok
-59507 - 59527 - DEC_290120_1930 -  59 rem vs  65 dec - ok
-59528 - 59548 - DEC_300120_1900 -  54 rem vs  61 dec - ok
-59549 - 59611 - DEC_040220_1900 - 338 rem vs 281 dec - ok
-59612 - 59632 - DEC_050220_1930 -  60 rem vs  64 dec - ok
-59633 - 59653 - DEC_060220_1930 -  60 rem vs  64 dec - todo mal
-59653 - 59672 - DEC_070220_1900 -  66 rem vs  65 dec - solo hay 3 pendientes de validación en tcb, ya envié correo a Irais.
-59673 - 59695 - DEC_100220_1900 - 218 rem vs 212 dec - solo hay 8 folios que no aparecen en la consulta de Omar, ya le pedí ayuda a Ira para validar.
-59696 - 59716 - DEC_110220_1930 -  66 rem vs  70 dec - solo hay un registro que no aparece en DEC_110220
-59717 - 59737 - DEC_120220_1930 -  66 rem vs  69 dec - solo hay un registro que no aparece en DEC_120220
-59738 - 59788 - DEC_170220_1000 - 284 rem vs 286 dec - solo hay dos registros que no aparecen en DEC_170220
-59789 - 59788 - DEC_180220_1830 - 106 rem vs   0 dec - 
+59495 - 59506 - DEC_280120_1900 -   44 rem vs  45 dec - ok
+59507 - 59527 - DEC_290120_1930 -   59 rem vs  65 dec - ok
+59528 - 59548 - DEC_300120_1900 -   54 rem vs  61 dec - ok
+59549 - 59611 - DEC_040220_1900 -  338 rem vs 281 dec - ok
+59612 - 59632 - DEC_050220_1930 -   60 rem vs  64 dec - ok
+59633 - 59653 - DEC_060220_1930 -   60 rem vs  64 dec - todo mal
+59633 - 59653 - DEC_060220_1930_2 - 60 rem vs  93 dec - ok
+59653 - 59672 - DEC_070220_1900 -   66 rem vs  65 dec - solo hay 3 pendientes de validación en tcb, ya envié correo a Irais.
+59673 - 59695 - DEC_100220_1900 -  218 rem vs 212 dec - solo hay 8 folios que no aparecen en la consulta de Omar, ya le pedí ayuda a Ira para validar.
+59696 - 59716 - DEC_110220_1930 -   66 rem vs  70 dec - solo hay un registro que no aparece en DEC_110220
+59717 - 59737 - DEC_120220_1930 -   66 rem vs  69 dec - solo hay un registro que no aparece en DEC_120220
+59738 - 59788 - DEC_170220_1000 -  284 rem vs 286 dec - solo hay dos registros que no aparecen en DEC_170220
+59789 - 59819 - DEC_180220_1830 -  106 rem vs 111 dec - ok
+59820 - 59849 - DEC_200220_0930 -   68 rem vs  73 dec - ok
+59850 - 59 - DEC_200220_0930 -   68 rem vs   0 dec - 
 */
 
 
@@ -92,7 +95,7 @@ select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta, RmopImpor
 select distinct( right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10)) cta, rmopfolio, RmInArchID, rmopfecmov
 from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID between 59696 and 59716  order by RmInArchID
 
-select * from PrgEspRemesas.dbo.DEC_170220_1000 where f6 = 'H' and f7 like '%REM%'
+select * from PrgEspRemesas.dbo.DEC_200220_0930 where f6 = 'H' and f7 like '%REM%'
 
 select right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10) cta ,rr.RmInArchID 
 from PrgEspRemesas.dbo.DEC_270120_1930 oo 
@@ -109,8 +112,8 @@ declare @aid_inicio  int;
 declare @aid_fin     int;
 declare @c_folios	 int;
 declare @folio varchar(50);
-set 	@aid_inicio = 59738;
-set 	@aid_fin    = 59788; 
+set 	@aid_inicio = 59820;
+set 	@aid_fin    = 59849; 
 
 WHILE @aid_inicio <= @aid_fin
     BEGIN
@@ -122,7 +125,7 @@ WHILE @aid_inicio <= @aid_fin
 		and    RmInArchID = @aid_inicio
 		and	   RmopCtaAdm not in (
 									select right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10) cta
-									from PrgEspRemesas.dbo.DEC_170220_1000 oo
+									from PrgEspRemesas.dbo.DEC_200220_0930 oo
 									join PrgEspRemesas.dbo.RemOperaciones rr on (right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10)) = oo.f1 and oo.f7	like concat('%',ltrim(rtrim([RmopFolio])),'%')
 									where oo.f6 = 'H' 
 									and oo.f7 like 'REM%'
@@ -210,6 +213,30 @@ and	   RmopFolio  = @folio;
 
 select * from PrgEspRemesas.dbo.t_temp_290120 order by RmInArchID
 truncate table PrgEspRemesas.dbo.t_temp_290120
+
+
+
+
+
+
+
+select RmopFolio
+from   PrgEspRemesas.dbo.RemOperaciones
+where  RmstID in ('D')
+and	   RmtmID	  = '2' --59653
+and    RmInArchID = 59653
+and	   RmopCtaAdm not in (
+							select right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10) cta
+							from PrgEspRemesas.dbo.DEC_060220_1930_2 oo
+							join PrgEspRemesas.dbo.RemOperaciones rr on (right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10)) = oo.f1 and oo.f7	like concat('%',ltrim(rtrim([RmopFolio])),'%')
+							where oo.f6 = 'H' 
+							and oo.f7 like 'REM%'
+							and rr.rminarchid = 59653
+						 );
+
+
+
+
 
 
 
