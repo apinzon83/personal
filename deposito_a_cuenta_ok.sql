@@ -51,10 +51,10 @@ where  RmopFolio in (
 rollback tran
 
 --paso 10 - consultamos los folios en T
-declare @archid int; set @archid = 59969
---select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by rmstid
---select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by rmstid
-select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by rmstid
+declare @archid int; set @archid = 59988
+--select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
+--select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
+select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 
 
 
@@ -90,8 +90,9 @@ select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopIm
 59878 - 59897 - DEC_240220_1900 -  231 rem vs 236 dec - solo hay un regustro que no aparece en DEC_240220
 59898 - 59919 - DEC_250220_1400 -   99 rem vs 106 dec - solo hay un regustro que no aparece en DEC_250220
 59920 - 59936 - DEC_260220_1330 -   59 rem vs  63 dec - ok
-59937 - 59968 - DEC_270220_1900 -  125 rem vs   0 dec
+59937 - 59968 - DEC_270220_1900 -  125 rem vs 148 dec - ok
 59969 - 59987 - DEC_280220_1830 -   84 rem vs   0 dec
+59988 - 60021 - DEC_030320_1200 -  349 rem vs   0 dec
 */
 
 
@@ -100,7 +101,7 @@ select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopIm
 select distinct( right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10)) cuenta, rmopfolio, RmInArchID, rmopfecmov
 from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID between 59850 and 59877  order by RmInArchID
 
-select * from PrgEspRemesas.dbo.DEC_260220_1330 where f6 = 'H' and f7 like '%REM%'
+select * from PrgEspRemesas.dbo.DEC_270220_1900 where f6 = 'H' and f7 like '%REM%'
 
 select right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10) cta ,rr.RmInArchID 
 from PrgEspRemesas.dbo.DEC_270120_1930 oo 
@@ -117,8 +118,8 @@ declare @aid_inicio  int;
 declare @aid_fin     int;
 declare @c_folios	 int;
 declare @folio varchar(50);
-set 	@aid_inicio = 59920;
-set 	@aid_fin    = 59936; 
+set 	@aid_inicio = 59988;
+set 	@aid_fin    = 60021; 
 
 WHILE @aid_inicio <= @aid_fin
     BEGIN
@@ -130,7 +131,7 @@ WHILE @aid_inicio <= @aid_fin
 		and    RmInArchID = @aid_inicio
 		and	   RmopCtaAdm not in (
 									select right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10) cta
-									from PrgEspRemesas.dbo.DEC_260220_1330 oo
+									from PrgEspRemesas.dbo.DEC_030320_1200 oo
 									join PrgEspRemesas.dbo.RemOperaciones rr on (right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10)) = oo.f1 and oo.f7	like concat('%',ltrim(rtrim([RmopFolio])),'%')
 									where oo.f6 = 'H' 
 									and oo.f7 like 'REM%'
@@ -155,6 +156,9 @@ WHILE @aid_inicio <= @aid_fin
 
 
 /*
+select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio = '03532000542015'
+select * from PrgEspRemesas.dbo.DEC_270220_1900 where f7 like    '%03532000542015%'
+
 select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio = '018126351743'
 select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like    '%018126351743%'
 
