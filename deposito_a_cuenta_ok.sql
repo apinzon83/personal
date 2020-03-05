@@ -51,7 +51,7 @@ where  RmopFolio in (
 rollback tran
 
 --paso 10 - consultamos los folios en T
-declare @archid int; set @archid = 59988
+declare @archid int; set @archid = 60022
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
@@ -91,8 +91,9 @@ select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopIm
 59898 - 59919 - DEC_250220_1400 -   99 rem vs 106 dec - solo hay un regustro que no aparece en DEC_250220
 59920 - 59936 - DEC_260220_1330 -   59 rem vs  63 dec - ok
 59937 - 59968 - DEC_270220_1900 -  125 rem vs 148 dec - ok
-59969 - 59987 - DEC_280220_1830 -   84 rem vs   0 dec
-59988 - 60021 - DEC_030320_1200 -  349 rem vs   0 dec
+59969 - 59987 - DEC_280220_1830 -   84 rem vs  95 dec - ok
+59988 - 60021 - DEC_030320_1200_2 -349 rem vs 359 dec - ok
+60022 - 60050 - DEC_040320_1800 -  107 rem vs   0 dec -  
 */
 
 
@@ -101,7 +102,7 @@ select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopIm
 select distinct( right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10)) cuenta, rmopfolio, RmInArchID, rmopfecmov
 from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID between 59850 and 59877  order by RmInArchID
 
-select * from PrgEspRemesas.dbo.DEC_270220_1900 where f6 = 'H' and f7 like '%REM%'
+select * from PrgEspRemesas.dbo.DEC_030320_1200_2 where f6 = 'H' and f7 like '%REM%'
 
 select right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10) cta ,rr.RmInArchID 
 from PrgEspRemesas.dbo.DEC_270120_1930 oo 
@@ -110,7 +111,7 @@ where oo.f6 = 'H' and oo.f7 like 'REM%' and rr.RmInArchID between 59465 and 5948
 
 --paso 12 - solicitamos los movimientos de las cuentas a Omar
 */
-
+--truncate table PrgEspRemesas.dbo.DEC_030320_1200
 truncate table PrgEspRemesas.dbo.t_temp_290120
 truncate table PrgEspRemesas.dbo.t_temp_290120
 
@@ -131,7 +132,7 @@ WHILE @aid_inicio <= @aid_fin
 		and    RmInArchID = @aid_inicio
 		and	   RmopCtaAdm not in (
 									select right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10) cta
-									from PrgEspRemesas.dbo.DEC_030320_1200 oo
+									from PrgEspRemesas.dbo.DEC_030320_1200_2 oo
 									join PrgEspRemesas.dbo.RemOperaciones rr on (right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10)) = oo.f1 and oo.f7	like concat('%',ltrim(rtrim([RmopFolio])),'%')
 									where oo.f6 = 'H' 
 									and oo.f7 like 'REM%'
@@ -153,11 +154,69 @@ WHILE @aid_inicio <= @aid_fin
 	select * from PrgEspRemesas.dbo.t_temp_290120
 --  select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio = @folio
 --  select * from PrgEspRemesas.dbo.DEC_060120_1000 where f7 like '%'+@folio+'%'
-
+select * from PrgEspRemesas.dbo.DEC_030320_1200_2 where f1 in (select f1 from PrgEspRemesas.dbo.DEC_030320_1200_2 where f1 not in (select f1 from PrgEspRemesas.dbo.DEC_030320_1200))
+select count(*) from dec_030320_1200
+select count(*) from dec_030320_1200_2
+select * from dec_030320_1200_2
 
 /*
-select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio = '03532000542015'
-select * from PrgEspRemesas.dbo.DEC_270220_1900 where f7 like    '%03532000542015%'
+select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio in (
+'00591040337303',
+'018126876169',
+'018126878608',
+'03528022000156',
+'03532000526215',
+'12826359943',
+'69283181506',
+'18857801094',
+'18857802753',
+'19102151090',
+'19102151603',
+'018126877835',
+'018126880208',
+'018126880775',
+'018126886221',
+'018126888441',
+'18529138088',
+'18566713686',
+'1899911121',
+'6581692797',
+'18857808594',
+'18857809238',
+'03532000537246',
+'018126999027',
+'284000000134310',
+'03502032000229',
+'018127186272')
+
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%00591040337303%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%00591040337303%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%018126876169%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%018126878608%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%03528022000156%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%03532000526215%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%12826359943%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%18857801094%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%18857802753%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%69283181506%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%19102151090%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%19102151603%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%018126877835%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%018126880208%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%018126880775%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%018126886221%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%018126888441%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%18529138088%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%18566713686%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%18857808594%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%18857809238%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%1899911121%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%6581692797%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%03532000537246%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%018126999027%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%284000000134310%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%03502032000229%'
+select * from PrgEspRemesas.dbo.dec_030320_1200_2 where f7 like    '%018127186272%'
 
 select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio = '018126351743'
 select * from PrgEspRemesas.dbo.DEC_070220_1900 where f7 like    '%018126351743%'
