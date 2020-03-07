@@ -51,7 +51,7 @@ where  RmopFolio in (
 rollback tran
 
 --paso 10 - consultamos los folios en T
-declare @archid int; set @archid = 60022
+declare @archid int; set @archid = 60074
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
@@ -94,6 +94,8 @@ select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopIm
 59969 - 59987 - DEC_280220_1830 -   84 rem vs  95 dec - ok
 59988 - 60021 - DEC_030320_1200_2 -349 rem vs 359 dec - ok
 60022 - 60050 - DEC_040320_1800 -  107 rem vs   0 dec -  
+60051 - 60073 - DEC_050320_1900 -   99 rem vs   0 dec - 
+60074 - 60094 - DEC_060320_1900 -  109 rem vs   0 dec - 
 */
 
 
