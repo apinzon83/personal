@@ -51,10 +51,10 @@ where  RmopFolio in (
 rollback tran
 
 --paso 10 - consultamos los folios en T
-declare @archid int; set @archid = 60074
+declare @archid int; set @archid = 60137
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
-select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
+select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 
 
 
@@ -93,18 +93,19 @@ select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopIm
 59937 - 59968 - DEC_270220_1900 -  125 rem vs 148 dec - ok
 59969 - 59987 - DEC_280220_1830 -   84 rem vs  95 dec - ok
 59988 - 60021 - DEC_030320_1200_2 -349 rem vs 359 dec - ok
-60022 - 60050 - DEC_040320_1800 -  107 rem vs   0 dec -  
-60051 - 60073 - DEC_050320_1900 -   99 rem vs   0 dec - 
-60074 - 60094 - DEC_060320_1900 -  109 rem vs   0 dec - 
-*/
-
+60022 - 60050 - DEC_040320_1600 -  107 rem vs 124 dec - ok
+60051 - 60073 - DEC_050320_1900 -   99 rem vs 119 dec - ok
+60074 - 60094 - DEC_060320_1900 -  109 rem vs 136 dec - solo hay un registro que no aparece en DEC_060320
+60095 - 60103 - DEC_090320_1030 -  283 rem vs 321 dec - solo hay un registro que no aparece en DEC_060320
+60104 - 60136 - DEC_100320_1900 -  304 rem vs 324 dec - 
+60137 - 60157 - DEC_110320_1900 -  137 rem vs   0 dec - 
 
 --paso 11 - validar los rminarcid
-/* 
+
 select distinct( right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10)) cuenta, rmopfolio, RmInArchID, rmopfecmov
 from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID between 59850 and 59877  order by RmInArchID
 
-select * from PrgEspRemesas.dbo.DEC_030320_1200_2 where f6 = 'H' and f7 like '%REM%'
+select * from PrgEspRemesas.dbo.DEC_100320_1900 where f6 = 'H' and f7 like '%REM%'
 
 select right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10) cta ,rr.RmInArchID 
 from PrgEspRemesas.dbo.DEC_270120_1930 oo 
@@ -121,8 +122,8 @@ declare @aid_inicio  int;
 declare @aid_fin     int;
 declare @c_folios	 int;
 declare @folio varchar(50);
-set 	@aid_inicio = 59988;
-set 	@aid_fin    = 60021; 
+set 	@aid_inicio = 60104;
+set 	@aid_fin    = 60136; 
 
 WHILE @aid_inicio <= @aid_fin
     BEGIN
@@ -134,7 +135,7 @@ WHILE @aid_inicio <= @aid_fin
 		and    RmInArchID = @aid_inicio
 		and	   RmopCtaAdm not in (
 									select right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10) cta
-									from PrgEspRemesas.dbo.DEC_030320_1200_2 oo
+									from PrgEspRemesas.dbo.DEC_100320_1900 oo
 									join PrgEspRemesas.dbo.RemOperaciones rr on (right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10)) = oo.f1 and oo.f7	like concat('%',ltrim(rtrim([RmopFolio])),'%')
 									where oo.f6 = 'H' 
 									and oo.f7 like 'REM%'
@@ -154,14 +155,28 @@ WHILE @aid_inicio <= @aid_fin
 	END;
 	
 	select * from PrgEspRemesas.dbo.t_temp_290120
---  select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio = @folio
---  select * from PrgEspRemesas.dbo.DEC_060120_1000 where f7 like '%'+@folio+'%'
+
+/*
+
+select * from PrgEspRemesas.dbo.RemOperaciones  where rmopctaadm in ('0275802502','1250225305','1204426033','1242882494','1269355879') and rminarchid = 60104
+select * from PrgEspRemesas.dbo.DEC_060120_1000 where f1 like '%0275802502%'
+select * from PrgEspRemesas.dbo.DEC_060120_1000 where f1 like '%1250225305%'
+select * from PrgEspRemesas.dbo.DEC_060120_1000 where f1 like '%1204426033%'
+select * from PrgEspRemesas.dbo.DEC_060120_1000 where f1 like '%1242882494%'
+select * from PrgEspRemesas.dbo.DEC_060120_1000 where f1 like '%1269355879%'
+
+select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio = '018127678342';
+select * from PrgEspRemesas.dbo.DEC_060120_1000 where f7 like    '%018127678342%';
+
+select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio = '018127385006'
+select * from PrgEspRemesas.dbo.DEC_060120_1000 where f7 like '%018127385006%'
+
 select * from PrgEspRemesas.dbo.DEC_030320_1200_2 where f1 in (select f1 from PrgEspRemesas.dbo.DEC_030320_1200_2 where f1 not in (select f1 from PrgEspRemesas.dbo.DEC_030320_1200))
 select count(*) from dec_030320_1200
 select count(*) from dec_030320_1200_2
 select * from dec_030320_1200_2
 
-/*
+
 select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio in (
 '00591040337303',
 '018126876169',
