@@ -51,7 +51,7 @@ where  RmopFolio in (
 rollback tran
 
 --paso 10 - consultamos los folios en T
-declare @archid int; set @archid = 60137
+declare @archid int; set @archid = 60179
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
@@ -99,6 +99,8 @@ select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas, RmopI
 60095 - 60103 - DEC_090320_1030 -  283 rem vs 321 dec - solo hay un registro que no aparece en DEC_060320
 60104 - 60136 - DEC_100320_1900 -  304 rem vs 324 dec - 
 60137 - 60157 - DEC_110320_1900 -  137 rem vs   0 dec - 
+60158 - 60178 - DEC_120320_1900 -  123 rem vs   0 dec - 
+60179 - 60199 - DEC_130320_1900 -  164 rem vs   0 dec - 
 
 --paso 11 - validar los rminarcid
 
