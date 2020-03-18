@@ -1,114 +1,36 @@
 /*
---Proceso cargo abono en cuenta (para depisito a cuenta '2')
-
---paso 1 - seleccionamos los registros en 0 y sin rmcccargaid
-select rmopfolio, RmopFecReg from PrgEspRemesas.dbo.RemOperaciones where RmstID in ('0') and RmtmID = '2' and RmCCCargaID is null order by RmopFecReg
-
---paso 2 - generamos cccairga id al
-select newid()
-begin tran
-insert into PrgEspRemesas.dbo.RemCtrlCarga values ('179C2E54-DEE6-4F5B-A4DF-BD295186A5D5','remesas_030120_1430','','MREM',getdate(),'usrtransfo1',0,3,0,'')
---paso 3 (ahora el insert solito)
-rollback tran
-
---paso 4 - consultamos el cccargaid
-select top 5 * from PrgEspRemesas.dbo.remctrlcarga order by RmCCFechaCarga desc
---select top 5 * from PrgEspRemesas.dbo.remctrlcarga where rmccfechacarga between '20191025 0:0:0' and '20191025 23:59:59' and rmccnomarch like 'remesas%' order by RmCCFechaCarga desc
---update PrgEspRemesas.dbo.remctrlcarga set rmccnomarch = 'remesas_281019_1115' where rmcccargaid = '808BA349-5742-41FB-8D60-B865E35BB498'
-
---paso 5 - actualizar el cccargaid a los folios seleccionados
-begin tran 
-update PrgEspRemesas.dbo.RemOperaciones 
-set    RmCCCargaID = '179C2E54-DEE6-4F5B-A4DF-BD295186A5D5'
-where  RmstID = '0'
-and    RmtmID = '2' 
-and    RmCCCargaID is null
-and    RmopFolio in ('')
-rollback tran
-
---paso 6 - contar y consultar folios que si tienen cccaigaid
-select rmopfolio				  from PrgEspRemesas.dbo.RemOperaciones where RmstID in('0') and RmtmID = '2' and RmCCCargaID is not null and RmInArchID = 0
-select count(*), sum(rmopimporte) from PrgEspRemesas.dbo.RemOperaciones where RmstID in('0') and RmtmID = '2' and RmCCCargaID is not null and RmInArchID = 0
-
---paso 7 - generamos el archid a los sig folios
-begin tran
-insert into PrgEspRemesas.dbo.PrgIntercambio
-	   (PeInFecEnvio, PeInFecVenc, PeInFecResp, PeInNumRegs, PeInTotImp, PeInNumRegsRech, EntiID, PeInNomArch, PeInTAID, PeInRechID, PeInstID, PeInObservacion, PeInTAPrograma)
-values ('2020-01-03 14:30:0', '2020-01-08 14:30:0', '2020-01-03 14:45:0', 11, 117841.98, 0, '0166', 'remesas_030120_1430', 'AC', '', 'TP', 'TRANSMITIDO POR ENTIDADES PROCESO DE ACTUALIZACION DE ESTAUS DIARIO' , 29)
-rollback tran
-
---paso 8 - consultamos el RmInArchID
-select top 5 * from PrgEspRemesas.dbo.prgintercambio order by 1 desc
-
---paso 9 - actualizamos el archid a los folios 
-begin tran
-update PrgEspRemesas.dbo.RemOperaciones
-set    rminarchid = 59145,
-       rmstid = 'T', 
-       RmopFecMov =  getdate()
-where  RmopFolio in (
-'')
-rollback tran
-
---paso 10 - consultamos los folios en T
+--consultamos los folios en T
 declare @archid int; set @archid = 60200
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 
-
-
-59213 - 59233 - DEC_100120_1900_13_33 - ok
-59234 - 59254 - DEC_100120_1900 - ok
-59255 - 59264 - DEC_130120_1130 - ok
-59265 - 59275 - DEC_130120_1900 - ok
-59275 - 59296 - DEC_150120_1800 - ok
-59297 - 59310 - DEC_150120_1430 - ok
-59311 - 59369 - DEC_200120_1130 - 
-59360 - 59371 - DEC_200120_1130 - ok
-59370 - 59401 - DEC_210120_1900 - 
-59381 - 59401 - DEC_210120_1900 - ok
-59402 - 59422 - DEC_220120_1930 - ok
-59423 - 59464 - DEC_240120_1900 - ok
-59465 - 59485 - DEC_270120_1930 - 205 REM vs 209 DEC - ok
-59486 - 59494 - DEC_280120_1000 - ok
-59495 - 59506 - DEC_280120_1900 -   44 rem vs  45 dec - ok
-59507 - 59527 - DEC_290120_1930 -   59 rem vs  65 dec - ok
-59528 - 59548 - DEC_300120_1900 -   54 rem vs  61 dec - ok
-59549 - 59611 - DEC_040220_1900 -  338 rem vs 281 dec - ok
-59612 - 59632 - DEC_050220_1930 -   60 rem vs  64 dec - ok
-59633 - 59653 - DEC_060220_1930 -   60 rem vs  64 dec - todo mal
-59633 - 59653 - DEC_060220_1930_2 - 60 rem vs  93 dec - ok
-59653 - 59672 - DEC_070220_1900 -   66 rem vs  65 dec - solo hay 3 pendientes de validación en tcb, ya envié correo a Irais.
-59673 - 59695 - DEC_100220_1900 -  218 rem vs 212 dec - solo hay 8 folios que no aparecen en la consulta de Omar, ya le pedí ayuda a Ira para validar.
-59696 - 59716 - DEC_110220_1930 -   66 rem vs  70 dec - solo hay un registro que no aparece en DEC_110220
-59717 - 59737 - DEC_120220_1930 -   66 rem vs  69 dec - solo hay un registro que no aparece en DEC_120220
-59738 - 59788 - DEC_170220_1000 -  284 rem vs 286 dec - solo hay dos registros que no aparecen en DEC_170220
-59789 - 59819 - DEC_180220_1830 -  106 rem vs 111 dec - ok
-59820 - 59849 - DEC_200220_0930 -   68 rem vs  73 dec - ok
-59850 - 59877 - DEC_210220_1430 -   84 rem vs  85 dec - ok
-59878 - 59897 - DEC_240220_1900 -  231 rem vs 236 dec - solo hay un regustro que no aparece en DEC_240220
-59898 - 59919 - DEC_250220_1400 -   99 rem vs 106 dec - solo hay un regustro que no aparece en DEC_250220
-59920 - 59936 - DEC_260220_1330 -   59 rem vs  63 dec - ok
-59937 - 59968 - DEC_270220_1900 -  125 rem vs 148 dec - ok
-59969 - 59987 - DEC_280220_1830 -   84 rem vs  95 dec - ok
-59988 - 60021 - DEC_030320_1200_2 -349 rem vs 359 dec - ok
-60022 - 60050 - DEC_040320_1600 -  107 rem vs 124 dec - ok
-60051 - 60073 - DEC_050320_1900 -   99 rem vs 119 dec - ok
 60074 - 60094 - DEC_060320_1900 -  109 rem vs 136 dec - solo hay un registro que no aparece en DEC_060320
 60095 - 60103 - DEC_090320_1030 -  283 rem vs 321 dec - solo hay un registro que no aparece en DEC_060320
 60104 - 60136 - DEC_100320_1900 -  304 rem vs 324 dec - 
-60137 - 60157 - DEC_110320_1900 -  137 rem vs   0 dec - 
-60158 - 60178 - DEC_120320_1900 -  123 rem vs   0 dec - 
-60179 - 60199 - DEC_130320_1900 -  164 rem vs   0 dec - 
+60137 - 60157 - DEC_110320_1900 -  137 rem vs 150 dec - 
+60158 - 60178 - DEC_120320_1900 -  123 rem vs 174 dec - 
+60179 - 60199 - DEC_130320_1900 -  164 rem vs 222 dec - 
 60200 - 60231 - DEC_170320_1200 -  394 rem vs   0 dec - 
 
---paso 11 - validar los rminarcid
+--validar los rminarcid
+--alter table dec add rem nvarchar(255)
+--update dec set rem = substring(descr,6,3) where folio <> ''
+--update dec set rem = substring(descr,6,3) where folio <> '' and rem is null
+--update dec set filename = 'dec_130320_1900.TXT' where fileName = 'dec_130320_1900_Omar.TXT'
+
+select * from dec
+select distinct(fileName) from dec
 
 select distinct( right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10)) cuenta, rmopfolio, RmInArchID, rmopfecmov
-from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID between 59850 and 59877  order by RmInArchID
+from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' 
+and RmInArchID between 60137 and 60157  order by RmInArchID
 
-select * from PrgEspRemesas.dbo.DEC_100320_1900 where f6 = 'H' and f7 like '%REM%'
+select id, cta, monto, fecha1, fecha2, rem, folio, descr from PrgEspRemesas.dbo.DEC where fileName = 'dec_100320_1900.txt' and folio <> ''
+select id, cta, monto, fecha1, fecha2, rem, folio, descr from PrgEspRemesas.dbo.DEC where fileName = 'dec_110320_1900.txt' and folio <> ''
+select id, cta, monto, fecha1, fecha2, rem, folio, descr from PrgEspRemesas.dbo.DEC where fileName = 'dec_120320_1900.TXT' and folio <> ''
+select id, cta, monto, fecha1, fecha2, rem, folio, descr from PrgEspRemesas.dbo.DEC where fileName = 'dec_130320_1900.TXT' and folio <> ''
+
 
 select right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10) cta ,rr.RmInArchID 
 from PrgEspRemesas.dbo.DEC_270120_1930 oo 
