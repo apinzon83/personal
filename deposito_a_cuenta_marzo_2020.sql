@@ -1,6 +1,6 @@
 /*
 --consultamos los folios en T
-declare @archid int; set @archid = 60200
+declare @archid int; set @archid = 60232
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
@@ -12,6 +12,7 @@ select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas, RmopI
 60158 - 60178 - DEC_120320_1900 -  123 rem vs 174 dec - 
 60179 - 60199 - DEC_130320_1900 -  164 rem vs 222 dec - 
 60200 - 60231 - DEC_170320_1200 -  394 rem vs   0 dec - 
+60232 - 60254 - DEC_180320_1330 -  157 rem vs   0 dec - 
 
 --validar los rminarcid
 --alter table dec add rem nvarchar(255)
@@ -26,6 +27,7 @@ select distinct( right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10)) cuenta, rmopfo
 from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' 
 and RmInArchID between 60137 and 60157  order by RmInArchID
 
+select id, cta, monto, fecha1, fecha2, rem, folio, descr from PrgEspRemesas.dbo.DEC where fileName = 'dec_090320_1030.txt' and folio <> ''
 select id, cta, monto, fecha1, fecha2, rem, folio, descr from PrgEspRemesas.dbo.DEC where fileName = 'dec_100320_1900.txt' and folio <> ''
 select id, cta, monto, fecha1, fecha2, rem, folio, descr from PrgEspRemesas.dbo.DEC where fileName = 'dec_110320_1900.txt' and folio <> ''
 select id, cta, monto, fecha1, fecha2, rem, folio, descr from PrgEspRemesas.dbo.DEC where fileName = 'dec_120320_1900.TXT' and folio <> ''
