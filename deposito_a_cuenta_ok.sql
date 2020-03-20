@@ -117,9 +117,8 @@ where oo.f6 = 'H' and oo.f7 like 'REM%' and rr.RmInArchID between 59465 and 5948
 
 --paso 12 - solicitamos los movimientos de las cuentas a Omar
 */
---truncate table PrgEspRemesas.dbo.DEC_030320_1200
 truncate table PrgEspRemesas.dbo.t_temp_290120
-truncate table PrgEspRemesas.dbo.t_temp_290120
+truncate table PrgEspRemesas.dbo.folios_temp_290120
 
 declare @aid_inicio  int;
 declare @aid_fin     int;

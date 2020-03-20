@@ -1,37 +1,40 @@
 /*
---consultamos los folios en T
-declare @archid int; set @archid = 60232
---select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
---select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
-select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
-
-60074 - 60094 - DEC_060320_1900 -  109 rem vs 136 dec - solo hay un registro que no aparece en DEC_060320
-60095 - 60103 - DEC_090320_1030 -  283 rem vs 321 dec - solo hay un registro que no aparece en DEC_060320
-60104 - 60136 - DEC_100320_1900 -  304 rem vs 324 dec - 
-60137 - 60157 - DEC_110320_1900 -  137 rem vs 150 dec - 
-60158 - 60178 - DEC_120320_1900 -  123 rem vs 174 dec - 
-60179 - 60199 - DEC_130320_1900 -  164 rem vs 222 dec - 
-60200 - 60231 - DEC_170320_1200 -  394 rem vs   0 dec - 
-60232 - 60254 - DEC_180320_1330 -  157 rem vs   0 dec - 
-
 --validar los rminarcid
 --alter table dec add rem nvarchar(255)
 --update dec set rem = substring(descr,6,3) where folio <> ''
 --update dec set rem = substring(descr,6,3) where folio <> '' and rem is null
 --update dec set filename = 'dec_130320_1900.TXT' where fileName = 'dec_130320_1900_Omar.TXT'
 
-select * from dec
-select distinct(fileName) from dec
+declare @archidIni int; set @archidIni = 60255
+declare @archidFin int; set @archidFin = 60273
+select right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D') and rmtmid = '2' and RmInArchID between @archidIni and @archidFin order by RmopFecMov
+select right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas from PrgEspRemesas.dbo.RemOperaciones where rmstid = 'D'            and rmtmid = '2' and RmInArchID between @archidIni and @archidFin order by RmopFecMov
 
-select distinct( right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10)) cuenta, rmopfolio, RmInArchID, rmopfecmov
-from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' 
-and RmInArchID between 60137 and 60157  order by RmInArchID
 
-select id, cta, monto, fecha1, fecha2, rem, folio, descr from PrgEspRemesas.dbo.DEC where fileName = 'dec_090320_1030.txt' and folio <> ''
-select id, cta, monto, fecha1, fecha2, rem, folio, descr from PrgEspRemesas.dbo.DEC where fileName = 'dec_100320_1900.txt' and folio <> ''
-select id, cta, monto, fecha1, fecha2, rem, folio, descr from PrgEspRemesas.dbo.DEC where fileName = 'dec_110320_1900.txt' and folio <> ''
-select id, cta, monto, fecha1, fecha2, rem, folio, descr from PrgEspRemesas.dbo.DEC where fileName = 'dec_120320_1900.TXT' and folio <> ''
-select id, cta, monto, fecha1, fecha2, rem, folio, descr from PrgEspRemesas.dbo.DEC where fileName = 'dec_130320_1900.TXT' and folio <> ''
+
+--consultamos los folios en T
+declare @archid int; set @archid = 60255
+--select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
+--select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
+select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
+
+59988 - 60021 - DEC_030320_1200_2 -349 rem vs 359 dec - ok
+60022 - 60050 - DEC_040320_1600 -  107 rem vs 124 dec - ok
+60051 - 60073 - DEC_050320_1900 -   99 rem vs 119 dec - ok
+60074 - 60094 - DEC_060320_1900 -  109 rem vs 136 dec - ok
+60095 - 60103 - DEC_090320_1030 -  283 rem vs 321 dec - ok
+60104 - 60136 - DEC_100320_1900 -  304 rem vs 324 dec - ok
+60137 - 60157 - DEC_110320_1900 -  137 rem vs 150 dec - ok
+60158 - 60178 - DEC_120320_1900 -  123 rem vs 174 dec - ok
+60179 - 60199 - DEC_130320_1900 -  164 rem vs 222 dec - ok
+60200 - 60231 - DEC_170320_1200 -  394 rem vs 518 dec - ok
+60232 - 60254 - DEC_180320_1330 -  157 rem vs 228 dec - ok
+60255 - 60273 - DEC_190320_1200 -  119 rem vs 143 dec - ok
+
+select distinct(fileName) from dec order by fileName
+
+select count(*) from PrgEspRemesas.dbo.RemOperaciones where rmstid = 'D' and rmtmid = '2' and RmInArchID between 60255 and 60273
+select count(*) from PrgEspRemesas.dbo.DEC where fileName = 'dec_190320_1200.TXT' and folio <> ''
 
 
 select right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10) cta ,rr.RmInArchID 
@@ -40,18 +43,67 @@ join PrgEspRemesas.dbo.RemOperaciones rr on (right('0000000000'+ltrim(rtrim(rr.r
 where oo.f6 = 'H' and oo.f7 like 'REM%' and rr.RmInArchID between 59465 and 59485 order by RmInArchID
 
 --paso 12 - solicitamos los movimientos de las cuentas a Omar
-*/
---truncate table PrgEspRemesas.dbo.DEC_030320_1200
+
 truncate table PrgEspRemesas.dbo.t_temp_290120
-truncate table PrgEspRemesas.dbo.t_temp_290120
+truncate table PrgEspRemesas.dbo.folios_temp_290120
 
 declare @aid_inicio  int;
 declare @aid_fin     int;
 declare @c_folios	 int;
 declare @folio varchar(50);
-set 	@aid_inicio = 60104;
-set 	@aid_fin    = 60136; 
+set 	@aid_inicio = 60200;
+set 	@aid_fin    = 60254; 
+*/
 
+select  top 1 RmInArchID 
+from    PrgEspRemesas.dbo.RemOperaciones oo
+join    PrgEspRemesas.dbo.DEC dd on dd.folio = oo.RmopFolio
+where   dd.folio <> ''
+order by RmInArchID desc
+
+select RemeID, RmopFolio, EntiID, SucuID, RmopImporte, RmopCtaAdm, RmInArchID, RmopFechaOrden, RmopFecReg, RmopFecMov, RmopFecVen
+from   PrgEspRemesas.dbo.RemOperaciones
+where  RmstID in ('D')
+and	   RmtmID	  = '2'
+and    RmInArchID between 59988 and 60254
+and	   RmopFolio not in ( select folio from PrgEspRemesas.dbo.DEC);
+
+
+
+select  --top 1 
+RmInArchID 
+from    PrgEspRemesas.dbo.RemOperaciones
+where   (right('0000000000'+ltrim(rtrim(RmopCtaAdm)),10)) in ( 
+'1662720117','5261924000','4152313628','1278282932','1238379455',
+'1212736902','0305601395','1178687016','1248984997','1269441489',
+'1243433230','1149693432','1247714593','1284200787','0262727613',
+'1278340003','0243699642','1239023243','0033466137','1212707028',
+'0174311662','0465213395','0050684224','0255588741','0103722039',
+'1270190109','0052063583','0235758984','1283418760','0075741165',
+'1204097453','1284818968','1243188511','0934745373','0277864120',
+'1247758822','0277673786','1217784311','1247803024','1240874857',
+'1243292040','1167760998','1241359817','1264086479','0304520935',
+'1263223081','0033608100','1273330264','0305677676','1169009386',
+'0497288357','1170146920','0286914072','0465973816','0033252560',
+'0356748947','1217799533','1247648007','1241405289','0468876636',
+'1241195153','1244929020','1244929020','0308913557','1217799533',
+'1278678477','1239845819','0243630829','1169923404','1217718517',
+'1284779129','1242612388','1170287534','1237743255','1247864448',
+'1284869672','1284238795','1187261894','1284892138','0277901799',
+'0395346133','1284114020','1245025786','1158907731','1238001943',
+'0306377714','1171595257','1239600313','1244256499','1171595257',
+'0230336737','1278261167','1212718025','1169873971','1269467104',
+'1250266903','1250266903','1278767254','1241017498','1284377817',
+'1283989992','1263172627','0046584736','0050786094','1284883525',
+'0392271060','0038482576','1148725177','1274209392','1284883525',
+'0465285765','0281960211','1278714678','1244853337','1268745237',
+'0395303043','1283709366','0303940720','1189473752','1216868255',
+'1242752366','0860270321')
+and RmInArchID >= 60255 -- and 60273 
+order by RmInArchID desc
+
+
+/*
 WHILE @aid_inicio <= @aid_fin
     BEGIN
 		insert into PrgEspRemesas.dbo.folios_temp_290120
@@ -60,14 +112,7 @@ WHILE @aid_inicio <= @aid_fin
 		where  RmstID in ('D')
 		and	   RmtmID	  = '2'
 		and    RmInArchID = @aid_inicio
-		and	   RmopCtaAdm not in (
-									select right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10) cta
-									from PrgEspRemesas.dbo.DEC_100320_1900 oo
-									join PrgEspRemesas.dbo.RemOperaciones rr on (right('0000000000'+ltrim(rtrim(rr.rmopCtaAdm)),10)) = oo.f1 and oo.f7	like concat('%',ltrim(rtrim([RmopFolio])),'%')
-									where oo.f6 = 'H' 
-									and oo.f7 like 'REM%'
-									and rr.rminarchid = @aid_inicio
-							     );
+		and	   RmopFolio not in ( select folio from PrgEspRemesas.dbo.DEC);
 		set @c_folios = (select count(*) from PrgEspRemesas.dbo.folios_temp_290120);
 		if @c_folios > 0 begin
 			insert into PrgEspRemesas.dbo.t_temp_290120
@@ -83,7 +128,7 @@ WHILE @aid_inicio <= @aid_fin
 	
 	select * from PrgEspRemesas.dbo.t_temp_290120
 
-/*
+
 
 select * from PrgEspRemesas.dbo.RemOperaciones  where rmopctaadm in ('0275802502','1250225305','1204426033','1242882494','1269355879') and rminarchid = 60104
 select * from PrgEspRemesas.dbo.DEC_060120_1000 where f1 like '%0275802502%'
