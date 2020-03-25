@@ -13,7 +13,7 @@ select right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas from PrgEspRemesa
 
 
 --consultamos los folios en T
-declare @archid int; set @archid = 60255
+declare @archid int; set @archid = 60316
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
 select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov
@@ -55,21 +55,23 @@ set 	@aid_inicio = 60200;
 set 	@aid_fin    = 60254; 
 */
 
+
 select  top 1 RmInArchID 
 from    PrgEspRemesas.dbo.RemOperaciones oo
 join    PrgEspRemesas.dbo.DEC dd on dd.folio = oo.RmopFolio
 where   dd.folio <> ''
 order by RmInArchID desc
 
+
 select RemeID, RmopFolio, EntiID, SucuID, RmopImporte, RmopCtaAdm, RmInArchID, RmopFechaOrden, RmopFecReg, RmopFecMov, RmopFecVen
 from   PrgEspRemesas.dbo.RemOperaciones
-where  RmstID in ('D')
-and	   RmtmID	  = '2'
-and    RmInArchID between 59988 and 60254
+where  RmstID = 'D'
+and	   RmtmID = '2'
+and    RmInArchID between 59988 and 60315
 and	   RmopFolio not in ( select folio from PrgEspRemesas.dbo.DEC);
 
 
-
+/*
 select  --top 1 
 RmInArchID 
 from    PrgEspRemesas.dbo.RemOperaciones
@@ -102,8 +104,6 @@ where   (right('0000000000'+ltrim(rtrim(RmopCtaAdm)),10)) in (
 and RmInArchID >= 60255 -- and 60273 
 order by RmInArchID desc
 
-
-/*
 WHILE @aid_inicio <= @aid_fin
     BEGIN
 		insert into PrgEspRemesas.dbo.folios_temp_290120
@@ -148,8 +148,9 @@ select count(*) from dec_030320_1200
 select count(*) from dec_030320_1200_2
 select * from dec_030320_1200_2
 
-
-select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio in (
+select * from prgespremesas.dbo.remstatus
+select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmopfolio in ('18859468207')
+select * from PrgEspRemesas.dbo.RemOperaciones  where rmopfolio in ('18859468207')
 '00591040337303',
 '018126876169',
 '018126878608',

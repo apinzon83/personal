@@ -1,0 +1,28 @@
+Git
+
+Git init
+
+Git add biografía.txt
+
+Git commit -m “version 1”
+
+ Git add .   //sube todo lo del directorio
+
+Git commit -m “cambios a v1”
+
+Git status
+
+Git show
+
+
+
+
+$ git init  					// inicia el repositorio en carpeta
+$ git add biografia.txt  		// Agrega el archivo al repositorio
+$git commit -m"version 1"  	// Agrega los ùltimos cambios hechos enel archivo
+$ git add .  				// Agrega todos los archivos modificados enla carpeta donde te encuentras trabajando
+$ git status  				// Muestra el status de la base de datos 
+$ git show  				// Muestra todos los cambios  historicos hechos
+$ git log biografia.txt  		// Muestra toda la historia de ese archivo. Que se modifico, cuando y quien
+$ git push  				// Envia a otro respositorio remoto
+$ git pull  				// Trae de otro repositorio
