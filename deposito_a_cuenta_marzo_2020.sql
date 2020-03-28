@@ -76,7 +76,8 @@ from   PrgEspRemesas.dbo.RemOperaciones
 where  RmstID = 'D'
 and	   RmtmID = '2'
 and    RmInArchID between 59988 and 60315
-and	   RmopFolio not in ( select folio from PrgEspRemesas.dbo.DEC);
+and	   RmopFolio not in ( select folio from PrgEspRemesas.dbo.DEC)
+order by RmInArchID;
 
 
 /*
