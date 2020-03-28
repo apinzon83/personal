@@ -237,12 +237,6 @@ update Gerencias set cve_puesto = '08030103' where idGerencia = 54
 
 update Subdireccion set cve_puesto = '09010100' where idSubdireccion = 42
 update Subdireccion set cve_puesto = '09010200' where idSubdireccion = 43
-*/
-
-select * from DireccionAdjunta
-select * from Direcciones where iddireccionAdjunta = 11
-select * from Subdireccion where idDireccion between 111 and 112
-select * from Gerencias where idSubdireccion between 42 and 43
 
 update Subdireccion set cve_puesto = '10010100' where idSubdireccion = 44
 
@@ -256,10 +250,188 @@ update Subdireccion set cve_puesto = '11020100' where idSubdireccion = 49
 update Subdireccion set cve_puesto = '11020200' where idSubdireccion = 50
 update Subdireccion set cve_puesto = '11020300' where idSubdireccion = 51
 
+update Subdireccion set cve_puesto = '12010100' where idSubdireccion = 52
+update Subdireccion set cve_puesto = '12010200' where idSubdireccion = 53
+update Subdireccion set cve_puesto = '12020100' where idSubdireccion = 54
+update Subdireccion set cve_puesto = '12020200' where idSubdireccion = 55
+
+insert into Direcciones values(131,13,'Dirección de Oraganización de Crédito y Garantías','DOCG','13010000');
+insert into Direcciones values(132,13,'Subdirección de Mesa de Contol y Guardavalores',   'SMCG','13020000');
+insert into Direcciones values(133,13,'Dirección de Seguimiento y Recuperación',          'DSR', '13030000');
+
+insert into subdireccion values(56,'Subdirección de Evaluación de Crédito y Garantías', 'SECG',131,'13010100');
+insert into subdireccion values(57,'Gerencia de Mesa de Control',                       'GMC', 132,'13020100');
+insert into subdireccion values(58,'Gerencia de Guardavalores',                         'GMC', 132,'13020200');
+insert into subdireccion values(59,'Subdirección de Seguimiento de Crédito y Garantías','SSCG',133,'13030100');
+insert into subdireccion values(60,'Subdirección de Recuperación',                      'SR',  133,'13030200');
+
+update Gerencias set idSubdireccion = 56, nomGerencia = 'Gerencia de Crédito', abrevGerencia = 'GC', cve_puesto = '13010101' where idGerencia = 55;
+insert into gerencias values(56,59,'Gerencia de Monitoreo de Crédito y Garantías','GMCG','13030101')
+insert into gerencias values(57,60,'Gerencia de Recuperación',                    'GMCG','13030201')
+
+select * from DireccionAdjunta
+select * from Direcciones  where iddireccionAdjunta = 13
+select * from Subdireccion where idDireccion    between 131 and 133
+select * from Gerencias    where idSubdireccion between 42  and 43
+
+--alter table bit_040320 add id_status  int
+--alter table bit_040320 add id_as      int
+--alter table bit_040320 add id_aa      int
+--alter table bit_040320 add id_porg    int
+--alter table bit_040320 add id_subporg int
+--alter table bit_040320 add id_ts      int
+
+--delete 
+--select count(*) from bit_040320 where Fec_sol is null
+select distinct(estatus) from bit_040320
+select * from statusot
+update bit_040320 set id_status = 4 where estatus = 'ABIERTO'
+update bit_040320 set id_status = 5 where estatus = 'TERMINADO'
+
+select * from bit_040320 
+select * from bit_040320 where id_status is null
+select noot from bit_040320 where noot not in (select idot from ots) --355
+
+select distinct(Area_Solicitante) from bit_040320 
+select * from AreaSolicitante
+update bit_040320 set id_as =  1 where Area_Solicitante = 'Banca Social'
+update bit_040320 set id_as =  2 where Area_Solicitante = 'Bides'
+update bit_040320 set id_as =  7 where Area_Solicitante = 'Dirección de Desarrollo y Mantenimiento de Sistemas'
+update bit_040320 set id_as = 15 where Area_Solicitante = 'Gerencia Compensación y Liquidación'
+update bit_040320 set id_as = 15 where Area_Solicitante = 'Gerencia de Compensación y Liquidación'
+update bit_040320 set id_as = 16 where Area_Solicitante = 'Gerencia de Control Operacional y Seguridad de la Información'
+update bit_040320 set id_as = 19 where Area_Solicitante = 'Negocios y Corresponsales'
+update bit_040320 set id_as = 21 where Area_Solicitante = 'Operación Tradicional'
+update bit_040320 set id_as = 22 where Area_Solicitante = 'QA'
+update bit_040320 set id_as = 25 where Area_Solicitante = 'subdireccion de Mantenimiento de Software'
+
+select * from bit_040320 where Area_Solicitante is null --------------------------------------------------------- 0
+
+select distinct(ASIGNADA_A)       from bit_040320 
+select * from AreaAsignacion
+
+update bit_040320 set id_aa =  2 where ASIGNADA_A = 'GI'
+update bit_040320 set id_aa =  1 where ASIGNADA_A = 'INFOTEC'
+update bit_040320 set id_aa = 14 where ASIGNADA_A = 'ISRAEL G'
+update bit_040320 set id_aa =  5 where ASIGNADA_A = 'One Project'
+
+select * from bit_040320 where ASIGNADA_A is null     --------------------------------------------------------- 19
+
+select distinct(Programa) from bit_040320 
+select * from cat_Programa
+
+update bit_040320 set id_programa =   1 where Programa = 'ADULTOS MAYORES'
+update bit_040320 set id_programa =   2 where Programa = 'AMEXCID'
+update bit_040320 set id_programa =   3 where Programa = 'BECAS BENITO JUAREZ'
+update bit_040320 set id_programa =   5 where Programa = 'CONAVI'
+update bit_040320 set id_programa =  11 where Programa = 'JEFAS DE FAMILIA'
+update bit_040320 set id_programa =  12 where Programa = 'OTROS SERVICIOS'
+update bit_040320 set id_programa =  17 where Programa = 'SEDATU-FONDEN'
+update bit_040320 set id_programa =  19 where Programa = 'SEMBRANDO VIDA'
+
+select * from bit_040320 where Programa is null       --------------------------------------------------------- 29
+
+select distinct(Subprograma) from bit_040320          
+select * from cat_subPrograma
+
+update bit_040320 set id_subporg =  1 where Subprograma = 'ABONO A CUENTA'
+update bit_040320 set id_subporg =  2 where Subprograma = 'BAJA DE RETENCIÓN'
+update bit_040320 set id_subporg =  2 where Subprograma = 'BAJA DE RETENCION/DOMICILIACION'
+update bit_040320 set id_subporg =  5 where Subprograma = 'BECAS EDUC. BASICA'
+update bit_040320 set id_subporg =  5 where Subprograma = 'BECAS EDUC. BASICA CANAL ABIERTO'
+update bit_040320 set id_subporg =  7 where Subprograma = 'BECAS JEF'
+update bit_040320 set id_subporg =  8 where Subprograma = 'CANAL ABIERTO'
+update bit_040320 set id_subporg =  9 where Subprograma = 'CANAL CERRADO'
+update bit_040320 set id_subporg = 12 where Subprograma = 'DOMICILIACIÓN'
+update bit_040320 set id_subporg = 16 where Subprograma = 'OTROS'
+
+select * from bit_040320 where Subprograma is null    --------------------------------------------------------- 36
+
+select distinct(Tipo_Servicio)    from bit_040320 where id_ts is null
+select * from cat_TipoServicio
+
+update bit_040320 set id_ts =  1 where Tipo_Servicio = 'AGREGAR TABLAS'
+update bit_040320 set id_ts =  4 where Tipo_Servicio = 'APERTURA ADICIONAL VALES DESPENSA'
+update bit_040320 set id_ts =  5 where Tipo_Servicio = 'APERTURA TITULAR VALES DESPENSA'
+update bit_040320 set id_ts =  6 where Tipo_Servicio = 'APLICACIÓN RETIROS'
+update bit_040320 set id_ts =  8 where Tipo_Servicio = 'Baja de Retención , Aplicación cargos y Alta de Retención'
+update bit_040320 set id_ts =  8 where Tipo_Servicio = 'BAJA RETENCIÓN'
+update bit_040320 set id_ts =  9 where Tipo_Servicio = 'BLOQUEO'
+update bit_040320 set id_ts = 12 where Tipo_Servicio = 'CAMBIO ESTATUS'
+update bit_040320 set id_ts = 13 where Tipo_Servicio = 'CAMBIO TARIFA'
+update bit_040320 set id_ts = 10 where Tipo_Servicio = 'CAMBIOS DE ADSCRIPCIÓN'
+update bit_040320 set id_ts = 18 where Tipo_Servicio = 'DESARROLLO'
+update bit_040320 set id_ts = 19 where Tipo_Servicio = 'DESBLOQUEO'
+update bit_040320 set id_ts = 21 where Tipo_Servicio = 'Devolución de Cuota e IVA de Administración'
+update bit_040320 set id_ts = 21 where Tipo_Servicio = 'DEVOLUCIONES'
+update bit_040320 set id_ts = 22 where Tipo_Servicio = 'DISPERSIÓN'
+update bit_040320 set id_ts = 25 where Tipo_Servicio = 'GENERACION REPORTE'
+update bit_040320 set id_ts = 27 where Tipo_Servicio = 'MANTENIMIENTO NOMBRES'
+update bit_040320 set id_ts = 30 where Tipo_Servicio = 'REASGINACIÓN TARJETAS'
+update bit_040320 set id_ts = 32 where Tipo_Servicio = 'REINTEGRO'
+update bit_040320 set id_ts = 35 where Tipo_Servicio = 'SOLICITUD DE MEDIOS'
+update bit_040320 set id_ts = 36 where Tipo_Servicio = 'VINCULACIÓN TARJETAS'
+update bit_040320 set id_ts = 21 where Tipo_Servicio = 'Cobro de cuota e IVA de administración'
+update bit_040320 set id_ts = 38 where Tipo_Servicio = 'ALTA EMISOR'
+update bit_040320 set id_ts = 39 where Tipo_Servicio = 'Aplicación de cobranza REFIN'
+update bit_040320 set id_ts = 37 where Tipo_Servicio = 'CAMBIO DE NIVEL'
+update bit_040320 set id_ts = 40 where Tipo_Servicio = 'Crédito Revolvente'
+
+insert into cat_TipoServicio values(37,'CAMBIO DE NIVEL')
+insert into cat_TipoServicio values(38,'ALTA EMISOR')
+insert into cat_TipoServicio values(39,'Aplicación de cobranza REFIN')
+insert into cat_TipoServicio values(40,'Crédito Revolvente')
+
+select * from bit_040320 where tipo_servicio is null   --------------------------------------------------------- 33
+
+*/
 
 
+SELECT [noot]           
+       /*
+      ,[Fec_sol]
+      ,[fec_rec_sol]
+      ,[hor_rec_sol]
+      ,[Descripcion]
+      
+      ,[idPersona]
+      ,[Solicitante]
+      */
+      ,[id_as]
+      ,[Area_Solicitante]
 
+      ,[id_aa]
+      ,[ASIGNADA_A]
+      /*
+      ,[Fec_envio]
 
+      ,[id_status]
+      ,[ESTATUS]
 
+      ,[Tiem_atn]
+      ,[Urgencia]
+      ,[Complejidad] 
+      ,[Fec_Estim_atn]
+      ,[Fec_Entrega]
+      ,[En_Tiempo]
+      ,[TIEMPO_Atn]
+      ,[OBSERVACIONES]
+      */
+      ,[id_porg]
+      ,[Programa]
 
+      ,[id_subporg]
+      ,[Subprograma]
+
+      ,[id_ts]
+      ,[Tipo_Servicio]
+      /*
+      ,[Beneficiarios]
+      ,[Monto_Orden]
+      ,[Aplicados]
+      ,[Monto_Dispersado]
+      ,[Rechazos]
+      ,[Monto_Rechazado]
+      */
+FROM [ctrlOts].[dbo].[bit_040320]
 
