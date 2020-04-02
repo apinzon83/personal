@@ -21,7 +21,7 @@ set     @archid = ( select  top 1 RmInArchID
 print @archid;
 set   @archid = @archid + 1;
 print @archid;
-select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov;
+--select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov;
 --select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov;
 select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov;
 
@@ -75,10 +75,26 @@ select RemeID, RmopFolio, EntiID, SucuID, RmopImporte, RmopCtaAdm, RmInArchID, R
 from   PrgEspRemesas.dbo.RemOperaciones
 where  RmstID = 'D'
 and	   RmtmID = '2'
-and    RmInArchID between 59988 and 60315
+and    RmInArchID between 59988 and 60439
 and	   RmopFolio not in ( select folio from PrgEspRemesas.dbo.DEC)
 order by RmInArchID;
 
+select distinct(rminarchid) from PrgEspRemesas.dbo.remoperaciones where RmInArchID > 60360 order by RmInArchID
+
+select rmopfolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta , RmInArchID
+from remoperaciones where rmopfolio in (
+'00591031141977','00591033096812' ,'00591040648526' ,'00591041173487','00591042474421',
+'018128933807'  ,'018128934294'   ,'018128937344'   ,'018128937862'  ,'018128941326'  ,
+'018128928509'  ,'018128929868'   ,'018128930043'   ,'018128932560'  ,'018128943595'  ,
+'20378000006125','284000000583026','284000000983481','3192141674'    ,'69548356492'   ,
+'799991190399'  ,'81107159599'    ,'8125430454'     ,'9892581607'    ,'9948469067'    ,
+'03525032000112','03532000545360' ,'18529613098'    ,'18529613924'   ,'18529614138'   ,
+'18529615648'   ,'18859966226'    ,'18859967570'    ,'18859978833'   ,'18859979906'   ,
+'18859979963'   ,'18859980367'    ,'18859982223'    ,'19070081781')
+and RmopFolio not in (select folio from dec )
+order by RmInArchID
+
+select top 1 * from dec
 
 /*
 select  --top 1 
