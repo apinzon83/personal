@@ -1,19 +1,35 @@
+declare @archid int; set @archid = (select top 1 RmInArchID from PrgEspRemesas.dbo.RemOperaciones oo join PrgEspRemesas.dbo.DEC dd on dd.folio = oo.RmopFolio where dd.folio <> '' order by RmInArchID desc);print @archid; set @archid = @archid + 1; print @archid;
+select remeid, RmopFolio,RmopImporte Importe, rmstid, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas,  RmopFecMov, RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid     in ('T')		      and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov;
+--select remeid, RmopFolio,RmopImporte Importe, rmstid, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas,  RmopFecMov, RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov;
+--select remeid, RmopFolio,RmopImporte Importe, rmstid, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas,  RmopFecMov, RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov;
+
+
 /*
-declare @archid int; 
-set     @archid = ( select  top 1 RmInArchID 
-					from    PrgEspRemesas.dbo.RemOperaciones oo
-					join    PrgEspRemesas.dbo.DEC dd on dd.folio = oo.RmopFolio
-					where   dd.folio <> ''
-					order   by RmInArchID desc
-				   );
-print @archid;
-set   @archid = @archid + 1;
-print @archid;
---select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('T')				   and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov;
---select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov;
-select RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas, --RmopImporte Importe, rmstid, RmopFecMov,
-RmInArchID,RmopFecMov from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' 
-and RmInArchID >= @archid order by RmopFecMov;
+
+select	right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas, 
+		rmInArchID, 
+		rmstid,
+		RmopFecMov
+from	PrgEspRemesas.dbo.RemOperaciones 
+where	rmstid = 'D'
+and		rmtmid = '2' 
+and		RmInArchID >= (select top 1 RmInArchID 
+					   from PrgEspRemesas.dbo.RemOperaciones oo 
+					   join PrgEspRemesas.dbo.DEC dd on dd.folio = oo.RmopFolio 
+					   where dd.folio <> '' order by RmInArchID)
+and		RmopFolio not in (select folio from PrgEspRemesas.dbo.dec) 
+and		RmopFecMov >= '20200513' order by RmopFecMov
+
+
+
+
+select * from PrgEspRemesas.dbo.RemOperaciones where RmopFolio in ('18992620327','18992657311')
+select top 1 * from PrgEspRemesas.dbo.dec where folio = '18992620327'
+select top 1 * from PrgEspRemesas.dbo.dec where folio = '18992657311'
+select * from PrgEspRemesas.dbo.RemStatus
+
+select top 5 * from PrgEspRemesas.dbo.RemOperaciones
+select remeid, RmopFolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuenta, RmopImporte Importe, rmstid, RmopFecMov,RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid = '0' and rmtmid = '2' order by RmopFecMov;
 
 
 59988 - 60021 - DEC_030320_1200_2 -349 rem vs 359 dec - ok
@@ -51,7 +67,7 @@ declare @c_folios	 int;
 declare @folio varchar(50);
 set 	@aid_inicio = 60200;
 set 	@aid_fin    = 60254; 
-*/
+
 
 
 select  top 1 RmInArchID 
@@ -61,15 +77,18 @@ where   dd.folio <> ''
 order by RmInArchID desc
 
 
-select  rmopfolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta , RmInArchID, RmopFecMov
+select  rmopfolio, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cta,RmstID , RmInArchID, RmopFecMov
 --RemeID, RmopFolio, EntiID, SucuID, RmopImporte, RmopCtaAdm, RmInArchID, RmopFechaOrden, RmopFecReg, RmopFecMov, RmopFecVen
 from   PrgEspRemesas.dbo.RemOperaciones
 where  RmstID = 'D'
 and	   RmtmID = '2'
-and    RmInArchID between 59969 and 60542
+and    RmInArchID between 59969 and 60987
 and	   RmopFecMov >= '20200229'
 and	   RmopFolio not in ( select folio from PrgEspRemesas.dbo.DEC)
 order by RmInArchID;
+
+select * from PrgEspRemesas.dbo.RemOperaciones where RmopFolio in ('18992620327','284000000501394')
+--update		  PrgEspRemesas.dbo.RemOperaciones set RmstID = 'D', rmopfecmov = '2020-05-06 11:30:00.133' where RmopFolio in ('18992620327','284000000501394')
 
 select distinct(rminarchid) from PrgEspRemesas.dbo.remoperaciones where RmInArchID > 60360 order by RmInArchID
 
@@ -131,7 +150,7 @@ from remoperaciones where rmopfolio in (
 and RmopFolio not in (select folio from dec )
 order by RmInArchID
 
-/*
+
 select  --top 1 
 RmInArchID 
 from    PrgEspRemesas.dbo.RemOperaciones
