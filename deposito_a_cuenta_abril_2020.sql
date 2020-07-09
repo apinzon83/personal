@@ -1,8 +1,10 @@
 declare @archid int; set @archid = (select top 1 RmInArchID from PrgEspRemesas.dbo.RemOperaciones oo join PrgEspRemesas.dbo.DEC dd on dd.folio = oo.RmopFolio where dd.folio <> '' order by RmInArchID desc);print @archid; set @archid = @archid + 1; print @archid;
-select remeid, RmopFolio,RmopImporte Importe, rmstid, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas,  RmopFecMov, RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid     in ('T')		      and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov;
---select remeid, RmopFolio,RmopImporte Importe, rmstid, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas,  RmopFecMov, RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov;
---select remeid, RmopFolio,RmopImporte Importe, rmstid, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas,  RmopFecMov, RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov;
+select remeid, RmopFolio,CONVERT(NVARCHAR(20), RmopImporte, 1) Importe, rmstid, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas,  RmopFecMov, RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid     in ('T')		      and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov;
+--select remeid, RmopFolio,CONVERT(NVARCHAR(20), RmopImporte, 1) Importe, rmstid, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas,  RmopFecMov, RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','D')          and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov;
+--select remeid, RmopFolio,CONVERT(NVARCHAR(20), RmopImporte, 1) Importe, rmstid, right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas,  RmopFecMov, RmInArchID from PrgEspRemesas.dbo.RemOperaciones where rmstid not in ('T','E','EL','I') and rmtmid = '2' and RmInArchID >= @archid order by RmopFecMov;
 
+--DECLARE @m MONEY  = 10000000.12 
+--SELECT CONVERT(NVARCHAR(20), RmopImporte, 1) AS importe from PrgEspRemesas.dbo.RemOperaciones where rmstid in ('D') and rmtmid = '2' and RmInArchID >= 61570 order by RmopFecMov;
 
 /*
 
@@ -11,14 +13,16 @@ select	right('0000000000'+ltrim(rtrim(rmopCtaAdm)),10) cuentas,
 		rmstid,
 		RmopFecMov
 from	PrgEspRemesas.dbo.RemOperaciones 
-where	rmstid = 'D'
+where	
+--		rmstid = 'D'
+		rmstid not in ('D','T')
 and		rmtmid = '2' 
 and		RmInArchID >= (select top 1 RmInArchID 
 					   from PrgEspRemesas.dbo.RemOperaciones oo 
 					   join PrgEspRemesas.dbo.DEC dd on dd.folio = oo.RmopFolio 
 					   where dd.folio <> '' order by RmInArchID)
 and		RmopFolio not in (select folio from PrgEspRemesas.dbo.dec) 
-and		RmopFecMov >= '20200513' order by RmopFecMov
+and		RmopFecMov >= '20200622' order by RmopFecMov
 
 
 
